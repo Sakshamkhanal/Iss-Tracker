@@ -1,25 +1,24 @@
 from flask import Flask,request
 import requests
 import math
+from tasks import satellite_tracker
 app = Flask(__name__)
-
-@app.route('/iss_gps',methods=['GET'])
-def get_gps():
-    data = requests.get("http://api.open-notify.org/iss-now.json")
-    return data.json()
-
+app.include(['task'])
 @app.route('/my_gps',methods=['POST'])
 def my_gps():
+    satellite_tracker.delay()
     iss_location = requests.get("http://api.open-notify.org/iss-now.json").json()
     iss_location_values = iss_location['iss_position']
     lon1 = iss_location_values['longitude']
-    lat1 = iss_location_values['laltitude']
-    import pdb;pdb.set_trace();
+    lat1 = iss_location_values['latitude']
     if request.method== 'POST':
-        my_location_values= request.get_json().split(',')
+        my_location_values= request.get_json()
+        data = my_location_values['location'].split(',')
         lon2,lat2=data[0],data[1]
 
-        haversine(lat1,lon1,lat2,lon2)
+        distance=haversine(float(lat1),float(lon1),float(lat2),float(lon2))
+        return {'Distance':distance}
+
 
 #Using haversine formula to calculate the distance
 def haversine(lat1,lon1,lat2,lon2):
@@ -34,3 +33,4 @@ def haversine(lat1,lon1,lat2,lon2):
         R = 6371.0
         distance = R*c
         return distance
+
