@@ -8,8 +8,11 @@ def create_app(config_class=Config):
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
 
-    @app.route('/test/')
-    def test_page():
-        return '<h1>Testing the Flask APplication Factory Pattern</h1>'
+    from app.get_gps import get_gps as main_get_gps
+    app.register_blueprint(main_get_gps)
+
+    #@app.route('/test/')
+    #def test_page():
+    #   return '<h1>Testing the Flask APplication Factory Pattern</h1>'
 
     return app
