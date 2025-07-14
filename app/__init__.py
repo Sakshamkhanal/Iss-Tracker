@@ -1,25 +1,31 @@
 from flask import Flask
 from config import Config
+from .extensions import db, migrate, celery
+
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    app.config.from_mapping(
-        CELERY=dict(
-            broker_url='redis://localhost',
-            result_backend="redds://localhost",
-            task_ignore_result=True.
-            ),
-            )
-
+    db.init(app)
+    migrate.init_app(app, db)
 
     from app.get_gps import get_gps as main_get_gps
+
     app.register_blueprint(main_get_gps)
 
-    #@app.route('/test/')
-    #def test_page():
-    #   return '<h1>Testing the Flask APplication Factory Pattern</h1>'
+    init_celery(app)
 
-    celery_app = celery_init_app(app)
     return app
+
+
+def init_celery(app=None):
+    app = app or create_app()
+    celery.conf.update(app.config)
+
+    class ContextTask(celery.Task):
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    celery.Task = ContextTask
