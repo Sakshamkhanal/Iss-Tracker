@@ -1,8 +1,8 @@
 import requests
 import csv
 
-# from celery import Celery
-from .extensions import celery
+from celery import Celery
+#from extensions import Celery
 
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 CELERY_RESULT_BACKEND = "redis://localhost:6379/0"

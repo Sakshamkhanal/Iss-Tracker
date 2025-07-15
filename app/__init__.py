@@ -1,13 +1,14 @@
-from flask import Flask
 from config import Config
-from .extensions import db, migrate, celery
+from flask import Flask
+
+from .extensions import celery, db, migrate
 
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    db.init(app)
+    db.init_app(app)
     migrate.init_app(app, db)
 
     from app.get_gps import get_gps as main_get_gps
