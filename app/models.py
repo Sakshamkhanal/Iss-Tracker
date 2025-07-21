@@ -1,9 +1,9 @@
-from extensions import db
+from app.extensions import db
 
 class SatelliteTLE(db.Model):
     __tablename__ = 'satellite_tles'
 
-    id = db.Column(db.Integer,primary=True)
+    id = db.Column(db.Integer,primary_key=True)
     object_name = db.Column(db.String(128))
     object_id = db.Column(db.String(32))
     epoch = db.Column(db.String(32))
