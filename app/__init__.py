@@ -5,6 +5,12 @@ from .extensions import celery, db, migrate
 
 
 def create_app(config_class=Config):
+    '''
+     यो file मा Flask app लाई initalzie  गरिएको छ।
+    साथै, database र migrate पनि यहीं initalize  गरिएको छ।
+    सबै sub-module हरूका blueprint हरू register गरिएको छ
+    र Celery पनि यहीं initalize  गरिएको छ।
+    '''
     app = Flask(__name__)
     app.config.from_object(config_class)
 
@@ -21,6 +27,20 @@ def create_app(config_class=Config):
 
 
 def init_celery(app=None):
+    '''
+    यो function initialize ले Flask एप्लिकेसनसँग Celery integrate  गर्छ।
+
+    यदि `app` दिइएको छैन भने नयाँ application  बनाइन्छ `create_app()` बाट।
+    त्यसपछि Flask एपको कन्फिगरेसन Celery मा अपडेट गरिन्छ।
+
+    ContextTask नामको custom Task क्लास बनाइएको छ जसले Celery टास्कहरूलाई
+    Flask को application context भित्र run गराउँछ।
+
+    यसले Celery task हरूलाई Flask app को config, database session,
+    र अन्य context elements प्रयोग गर्न अनुमति दिन्छ।
+
+    अन्त्यमा Celery को default Task क्लासलाई ContextTask बाट override गरिएको छ।
+    '''
     app = app or create_app()
     celery.conf.update(app.config)
 

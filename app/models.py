@@ -1,6 +1,11 @@
 from app.extensions import db
 
 class SatelliteTLE(db.Model):
+    """
+    यहाँ Celestrak बाट JSON response अनुसार models बनाइएको छ।
+    यो Celery task ले data हरू load गर्दा सो डेटा यो table मा insert वा update गर्छ।
+    """
+
     __tablename__ = 'satellite_tles'
 
     id = db.Column(db.Integer,primary_key=True)
