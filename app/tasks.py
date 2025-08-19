@@ -1,8 +1,8 @@
 import requests
 import csv
 
-from celery import Celery
-#from extensions import Celery
+#from celery import Celery
+from app.extensions import Celery
 
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
@@ -16,5 +16,6 @@ def get_satellites():
         Celery का task हरू यहाँ defined छन्।
     '''
     url = "https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=json"
+    #import pdb;pdb.set_trace();
     data = requests.get(url)
     return data
